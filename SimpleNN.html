@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Нейросеть</title>
+    </head>
+    <body style="background-color: rgba(0, 0, 0, 0.1);">
+        <input type="text" id="i1" name="field" placeholder="Пример input 1.1">
+        <input type="text" id="i1_2" name="field" placeholder="Пример input 1.2">
+        <input type="text" id="i1_3" name="field" placeholder="Пример input 1.3">
+        <input type="text" id="i1_4" name="field" placeholder="Пример input 1.4"></br>
+
+        <input type="text" id="i2" name="field" placeholder="Пример input 2.1">
+        <input type="text" id="i2_2" name="field" placeholder="Пример input 2.2">
+        <input type="text" id="i2_3" name="field" placeholder="Пример input 2.3">
+        <input type="text" id="i2_4" name="field" placeholder="Пример input 2.4"></br>
+
+        <input type="text" id="o" name="field" placeholder="Пример out 1">
+        <input type="text" id="o_2" name="field" placeholder="Пример out 2">
+        <input type="text" id="o_3" name="field" placeholder="Пример out 3">
+        <input type="text" id="o_4" name="field" placeholder="Пример out 4"></br>
+        <button onclick="le()" class="b">Обучить</button>
+
+        <p><input type="text" id="inp1" placeholder="Input1"></br>
+        <input type="text" id="inp2" placeholder="Input2"></br>
+        <span style="color: #156e37; font-size: 17px; margin: 2px">Out: <text id="tx"></text></span></br>
+        <button onclick="test()" class="b">Тест</button></br>
+        <p><span style="color: #156e37; margin: 2px">Это простой перцептрон: 2 входных нейрона, 1 нейрон сдвига, 3 нейрона в скрытом слое и 1 выходной;</br>
+        Функция активации для нейрорнов скрытого и выходного слоёв: LReLu f(x)=max(0.01*x, x);</br>
+        Для обучения используется метод обратного распрстранения ошибки;</br>
+        Основные задачи, которые может решить нейросеть: функция XOR, сложение.</span>
+
+
+ <style type="text/css">
+            input[type=text] {
+            padding: 5px;
+            margin: 2px;
+            border: 0;
+            border-bottom:2px solid #0a0;
+            box-shadow:0 0 15px 4px rgba(0, 180, 0, 0.1);
+            border-radius:10px;
+            }
+            button {
+            border-radius: 10px;
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px;
+            margin: 2px;
+            -webkit-transition-duration: 0.4s; /* Safari */
+            transition-duration: 0.4s;
+            cursor: pointer;
+            }
+
+            button {
+            background-color: #4CAF50;
+            color: white;
+            border: 2px solid #4CAF50;
+            }
+
+            button:hover {
+            background-color: white; 
+            color: black;
+            }
+        </style>
+
+
+
+        <script type="text/javascript">
+            var err, sr_err=100, e3, e4, e5, p3, p4, p5, p6, l = 0.0001, co6, co6_2, co6_3, co6_4;
+            var b0, i1, i2, i1_2, i2_2, i1_3, i2_3, i1_4, i2_4, n3, n4, n5, o6, iter = 0;
+            b0 = 1;
+            function rand(){ //функция рандома
+                return Math.trunc(Math.random() * 600 + 1 - 300) / 100;
+            }
+
+            var w= //веса
+            {
+                w03: rand(), 
+                w04: rand(), 
+                w05: rand(), 
+                w13: rand(), 
+                w14: rand(), 
+                w15: rand(), 
+                w23: rand(), 
+                w24: rand(), 
+                w25: rand(), 
+                w36: rand(), 
+                w46: rand(), 
+                w56: rand()
+            }
+            
+            function le(){
+                iter=0;
+
+                i1 = document.getElementById("i1").value;
+                i2 = document.getElementById("i2").value;
+                co6 = document.getElementById("o").value;
+
+                i1_2 = document.getElementById("i1_2").value;
+                i2_2 = document.getElementById("i2_2").value;
+                co6_2 = document.getElementById("o_2").value;
+
+                i1_3 = document.getElementById("i1_3").value;
+                i2_3 = document.getElementById("i2_3").value;
+                co6_3 = document.getElementById("o_3").value;
+
+                i1_4 = document.getElementById("i1_4").value;
+                i2_4 = document.getElementById("i2_4").value;
+                co6_4 = document.getElementById("o_4").value;
+                learn();
+            }
+
+            function test(){
+                i1 = document.getElementById("inp1").value;
+                i2 = document.getElementById("inp2").value;
+                neuro(i1, i2);
+                document.getElementById("tx").innerHTML = o6; 
+            }
+
+            function neuro(x, y){
+                // ReLu f(x)=max(0,x)
+                // ReLu  со смещенрием f(x)=max(0.1*x,x)
+                // y=Math.max(0.01*x,x)
+                n3 = Math.max(0.01*(b0*w.w03 + x*w.w13 + y*w.w23),(b0*w.w03 + x*w.w13 + y*w.w23));
+                n4 = Math.max(0.01*(b0*w.w04 + x*w.w14 + y*w.w24),(b0*w.w04 + x*w.w14 + y*w.w24));
+                n5 = Math.max(0.01*(b0*w.w05 + x*w.w15 + y*w.w25),(b0*w.w05 + x*w.w15 + y*w.w25));
+                o6 = Math.max(0.01*(n3*w.w36 + n4*w.w46 + n5*w.w56),(n3*w.w36 + n4*w.w46 + n5*w.w56));
+            }
+
+            function correct (input1, input2, out6){
+                iter++;
+                neuro(input1, input2);
+                err = out6 - o6;
+                e3  = w.w36 * err;
+                e4  = w.w46 * err;
+                e5  = w.w56 * err;
+                if (n3 >= 0){
+                    p3 = 1;
+                } else{
+                    p3 = 0.01;
+                }
+
+                if (n4 >= 0){
+                    p4 = 1;
+                } else{
+                    p4 = 0.01;
+                }
+
+                if (n5 >= 0){
+                    p5 = 1;
+                } else{
+                    p5 = 0.01;
+                }
+
+                if (o6 >= 0){
+                    p6 = 1;
+                } else{
+                    p6 = 0.01;
+                }
+                w.w03 += l*e3*p3*b0;
+                w.w13 += l*e3*p3*input1;
+                w.w23 += l*e3*p3*input2;
+
+                w.w04 += l*e4*p4*b0;
+                w.w14 += l*e4*p4*input1;
+                w.w24 += l*e4*p4*input2;
+
+                w.w05 += l*e5*p5*b0;
+                w.w15 += l*e5*p5*input1;
+                w.w25 += l*e5*p5*input2;
+
+                w.w36 += l*err*p6*n3;
+                w.w46 += l*err*p6*n4;
+                w.w56 += l*err*p6*n5;
+                sr_err=((err*err)+sr_err*99)/100;
+            }
+
+            function learn (){
+                do {
+                    correct(i1, i2, co6);
+                    correct(i1_2, i2_2, co6_2);
+                    correct(i1_3, i2_3, co6_3);
+                    correct(i1_4, i2_4, co6_4);
+                    if (iter > 20000000){
+                     alert("Обучение провалено (количество итераций больше 20 000 000); средняя ошибка: " + sr_err);
+                        return;
+                    }
+            }
+            while (Math.abs(sr_err) > 0.00001)
+            alert("Обучение завершено!")
+            }
+        </script>
+    </body>
+</html>
